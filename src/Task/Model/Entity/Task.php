@@ -1,6 +1,6 @@
 <?php
 
-namespace Acme\Task\Model;
+namespace Acme\Task\Model\Entity;
 
 
 class Task

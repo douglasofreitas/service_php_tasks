@@ -2,14 +2,24 @@
 
 namespace Acme\Task\Controller;
 
-use Acme\Task\Model\Task;
+use Acme\Task\Model\Entity\Task;
+use Acme\Task\Model\Manager\TaskManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
-use Acme\Util\Database;
 
 class TaskController implements ControllerProviderInterface {
+
+    /**
+     * @var TaskManager
+    */ 
+    protected $taskManager;
+
+    function __construct(){
+      $this->taskManager = new TaskManager();
+    }
+    
 
     public function connect(Application $app) {
         $factory = $app['controllers_factory'];
@@ -19,9 +29,8 @@ class TaskController implements ControllerProviderInterface {
     }
 
     public function listAction()
-    {
-        $conn = Database::getConnection();
-        $results = $conn->query('SELECT * FROM tasks');
+    {      
+        $results = $this->taskManager->findAll();
         $response = array(
             'tasks' => [],
         );
@@ -52,13 +61,9 @@ class TaskController implements ControllerProviderInterface {
             $task = new Task();
             $task->setDescription($title);
 
-            $conn = Database::getConnection();
-            $sql = "INSERT INTO tasks (description) VALUES (:title)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':title', $title);
-            $stmt->execute();
+            $results = $this->taskManager->insert($task);
 
-            $task->setId($conn->lastInsertId());
+            $task->setId($this->taskManager->lastInsertId());
 
             return new JsonResponse([
                 'id' => $task->getId(),
