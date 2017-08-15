@@ -10,6 +10,8 @@ O controller TaskController deve usar construtor para centralizar a criação do
 
 É indicado o uso de um Manager para o Model, para que comandos SQL ou consultas espefícicas sejam centralizadas no contexto do modelo da aplicação.
 
+Não há tratativa de erros que podem ocorrer na interação com o banco, como a ação de "Insert"
+
 ### API RESTFull
 
 A forma de implementação do POST da Task não esta adequada. 
@@ -20,6 +22,7 @@ Correto:  POST /
 
 No " GET / ", uma recomendação é usar limit e um metadata sobre o resultado:
 
+Ref: https://github.com/WhiteHouse/api-standards
 
 ## Tests
 
