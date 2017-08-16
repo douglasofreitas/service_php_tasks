@@ -23,8 +23,8 @@ class TaskController implements ControllerProviderInterface {
 
     public function connect(Application $app) {
         $factory = $app['controllers_factory'];
-        $factory->get('/','Acme\Task\Controller\TaskController::listAction');
-        $factory->post('/add','Acme\Task\Controller\TaskController::createAction');
+        $factory->get('/tasks','Acme\Task\Controller\TaskController::listAction');
+        $factory->post('/tasks','Acme\Task\Controller\TaskController::createAction');
         return $factory;
     }
 
