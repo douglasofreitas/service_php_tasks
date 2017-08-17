@@ -39,6 +39,7 @@ class TaskController implements ControllerProviderInterface {
             $response['tasks'][] = array(
                 'id' => $t['id'],
                 'title' => $t['description'],
+                'tags' => $t['tags'],
             );
         }
 

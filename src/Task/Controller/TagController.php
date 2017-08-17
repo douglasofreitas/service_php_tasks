@@ -25,6 +25,7 @@ class TagController implements ControllerProviderInterface {
         $factory = $app['controllers_factory'];
         $factory->get('/tags','Acme\Task\Controller\TagController::listAction');
         $factory->post('/tags','Acme\Task\Controller\TagController::createAction');
+        $factory->put('/tags/{id}','Acme\Task\Controller\TagController::updateAction');
         return $factory;
     }
 
@@ -39,6 +40,7 @@ class TagController implements ControllerProviderInterface {
             $response['tags'][] = array(
                 'id' => $t['id'],
                 'title' => $t['title'],
+                'color' => $t['color'],
             );
         }
 
@@ -69,6 +71,35 @@ class TagController implements ControllerProviderInterface {
 
             return new JsonResponse([
                 'id' => $tag->getId(),
+                'title' => $tag->getTitle(),
+                'color' => $tag->getColor(),
+            ], 201);
+        }
+    }
+
+    public function updateAction($id)
+    {
+        $raw_data = file_get_contents("php://input");
+
+        $data = json_decode($raw_data, TRUE);
+
+        $title = isset($data['title']) ? $data['title'] : NULL;
+        $color = isset($data['color']) ? $data['color'] : NULL;
+
+        if (strlen($title) < 3) {
+            return new JsonResponse([
+                'message' => 'The title field must have 3 or more characters'
+            ], 422);
+        } else {
+            $tag = new Tag();
+            $tag->setId($id);
+            $tag->setTitle($title);
+            $tag->setColor($color);
+
+            $results = $this->tagManager->update($tag);
+
+            return new JsonResponse([
+                'id' => $id,
                 'title' => $tag->getTitle(),
                 'color' => $tag->getColor(),
             ], 201);

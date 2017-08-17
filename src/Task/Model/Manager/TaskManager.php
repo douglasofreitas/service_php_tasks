@@ -1,5 +1,4 @@
 <?php
-
 namespace Acme\Task\Model\Manager;
 
 use Acme\Task\Model\Entity\Task;
@@ -19,7 +18,28 @@ class TaskManager
 	}
 
   function findAll(){
-    return $this->connection->query('SELECT * FROM tasks');
+    $results = [];
+    $tasks = $this->connection->query('SELECT * FROM tasks ');
+    foreach ($tasks as $t) {
+      $tagsFormat = [];
+      $tags = $this->connection->query('SELECT tg.* FROM tags tg 
+        INNER JOIN task_tag tt ON tt.tag_id = tg.id
+        WHERE tt.task_id = '.$t['id']);
+      foreach ($tags as $t) {
+        $tagsFormat[] = array(
+          'id' => $t['id'],
+          'title' => $t['title'],
+          'color' => $t['color']
+        );
+      }
+
+      $results[] = array(
+        'id' => $t['id'],
+        'title' => $t['description'],
+        'tags' => $tagsFormat
+      );
+    }
+    return $results;
   }
 
   function insert($task){
