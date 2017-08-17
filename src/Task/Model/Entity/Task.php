@@ -21,6 +21,11 @@ class Task
     private $isDone;
 
     /**
+     * @var array
+     */
+    private $tags;
+
+    /**
      * @return int
      */
     public function getId()
@@ -66,5 +71,21 @@ class Task
     public function setIsDone($isDone)
     {
         $this->isDone = $isDone;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * @param array $tags
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
     }
 }

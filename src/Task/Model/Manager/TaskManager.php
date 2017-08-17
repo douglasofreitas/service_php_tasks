@@ -19,9 +19,6 @@ class TaskManager
 	}
 
   function findAll(){
-    $tag = new Tag();
-    $tag->setTitle('Tag1');
-    $this->tagManager->save($tag);
     return $this->connection->query('SELECT * FROM tasks');
   }
 
@@ -29,7 +26,31 @@ class TaskManager
     $sql = "INSERT INTO tasks (description) VALUES (:title)";
     $stmt = $this->connection->prepare($sql);
     $stmt->bindParam(':title', $task->getDescription());
-    return $stmt->execute();
+    $stmt->execute();
+    $id = $this->connection->lastInsertId();
+
+    // associate tags to task
+    if(!empty($task->getTags())){
+        foreach($task->getTags() as $item){
+            $tag = new Tag();
+            $tag->setTitle($item['title']);
+            if(!empty($item['color']) )$tag->setColor($item['color']);
+            $tagId = $this->tagManager->insert($tag);
+            // insert relation
+            $this->insertTag($id, $tagId);
+        }
+    }
+
+    return $id;
+  }
+
+  function insertTag($taskId, $tagId){
+    $sql = "INSERT INTO task_tag (task_id, tag_id) VALUES (:task_id, :tag_id)";
+    $stmt = $this->connection->prepare($sql);
+    $stmt->bindParam(':task_id', $taskId);
+    $stmt->bindParam(':tag_id', $tagId);
+    $stmt->execute();
+    return $this->connection->lastInsertId();
   }
 
   function lastInsertId(){

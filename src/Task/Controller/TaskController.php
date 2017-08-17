@@ -60,18 +60,18 @@ class TaskController implements ControllerProviderInterface {
         } else {
             $task = new Task();
             $task->setDescription($title);
+            if(!empty($data['tags'])){
+                $task->setTags($data['tags']);
+            }
 
             $results = $this->taskManager->insert($task);
             $taskId = $this->taskManager->lastInsertId();
             $task->setId($taskId);
 
-            foreach($data['tags'] as $item){
-                $tag = new Tag();
-            }
-
             return new JsonResponse([
                 'id' => $task->getId(),
                 'title' => $task->getDescription(),
+                'tags' => $task->getTags()
             ], 201);
         }
     }
