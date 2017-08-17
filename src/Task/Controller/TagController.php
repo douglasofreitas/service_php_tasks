@@ -2,43 +2,43 @@
 
 namespace Acme\Task\Controller;
 
-use Acme\Task\Model\Entity\Task;
-use Acme\Task\Model\Manager\TaskManager;
+use Acme\Task\Model\Entity\Tag;
+use Acme\Task\Model\Manager\TagManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Silex\Application;
 use Silex\Api\ControllerProviderInterface;
 
-class TaskController implements ControllerProviderInterface {
+class TagController implements ControllerProviderInterface {
 
     /**
-     * @var TaskManager
+     * @var TagManager
     */ 
-    protected $taskManager;
+    protected $tagManager;
 
     function __construct(){
-      $this->taskManager = new TaskManager();
+      $this->tagManager = new TagManager();
     }
     
 
     public function connect(Application $app) {
         $factory = $app['controllers_factory'];
-        $factory->get('/tasks','Acme\Task\Controller\TaskController::listAction');
-        $factory->post('/tasks','Acme\Task\Controller\TaskController::createAction');
+        $factory->get('/tags','Acme\Task\Controller\TagController::listAction');
+        $factory->post('/tags','Acme\Task\Controller\TagController::createAction');
         return $factory;
     }
 
     public function listAction()
     {      
-        $results = $this->taskManager->findAll();
+        $results = $this->tagManager->findAll();
         $response = array(
-            'tasks' => [],
+            'tags' => [],
         );
 
         foreach ($results as $t) {
-            $response['tasks'][] = array(
+            $response['tags'][] = array(
                 'id' => $t['id'],
-                'title' => $t['description'],
+                'title' => $t['title'],
             );
         }
 
@@ -52,26 +52,25 @@ class TaskController implements ControllerProviderInterface {
         $data = json_decode($raw_data, TRUE);
 
         $title = isset($data['title']) ? $data['title'] : NULL;
+        $color = isset($data['color']) ? $data['color'] : NULL;
 
         if (strlen($title) < 3) {
             return new JsonResponse([
                 'message' => 'The title field must have 3 or more characters'
             ], 422);
         } else {
-            $task = new Task();
-            $task->setDescription($title);
+            $tag = new Tag();
+            $tag->setTitle($title);
+            $tag->setColor($color);
 
-            $results = $this->taskManager->insert($task);
-            $taskId = $this->taskManager->lastInsertId();
-            $task->setId($taskId);
-
-            foreach($data['tags'] as $item){
-                $tag = new Tag();
-            }
+            $results = $this->tagManager->insert($tag);
+            $tagId = $this->tagManager->lastInsertId();
+            $tag->setId($tagId);
 
             return new JsonResponse([
-                'id' => $task->getId(),
-                'title' => $task->getDescription(),
+                'id' => $tag->getId(),
+                'title' => $tag->getTitle(),
+                'color' => $tag->getColor(),
             ], 201);
         }
     }
