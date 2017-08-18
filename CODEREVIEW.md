@@ -39,6 +39,9 @@ Ref: https://github.com/WhiteHouse/api-standards
 Os testes não rodaram no Docker (PHPUnit não instalado e comando mensionado não funciona  ).
 Comando correto para os testes: vendor/bin/phpunit --debug -c tests 
 
-
-
+Instalar PHPUnit no Docker (Pode ser adicionado no Dockerfile):
+$ wget https://phar.phpunit.de/phpunit-6.2.phar
+$ chmod +x phpunit-6.2.phar
+$ sudo mv phpunit-6.2.phar /usr/local/bin/phpunit
+$ phpunit --version
 
