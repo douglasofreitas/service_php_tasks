@@ -1,5 +1,5 @@
 {
-  "name": "upx/teste-backend",
+  "name": "service_php_tasks",
   "description": "What can be better?",
   "minimum-stability" : "stable",
   "autoload": {
